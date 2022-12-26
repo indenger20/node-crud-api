@@ -1,0 +1,11 @@
+{
+  "name": "crud",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/indenger20/node-crud-api.git",
+  "author": "yaroslav.sklema <yaroslav.sklema@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "index.js"
+  }
+}

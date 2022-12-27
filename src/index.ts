@@ -1,3 +1,3 @@
 import './new/other';
 
-console.log(12123);
+console.log(1212231);

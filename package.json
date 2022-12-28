@@ -1,7 +1,6 @@
 {
   "name": "crud",
   "version": "1.0.0",
-  "main": "dist/index.js",
   "repository": "https://github.com/indenger20/node-crud-api.git",
   "author": "yaroslav.sklema <yaroslav.sklema@gmail.com>",
   "license": "MIT",
@@ -31,6 +30,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "uuid": "^9.0.0"
   }
 }

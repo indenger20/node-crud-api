@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import Router from './router';
-import BodyParser from './bodyParser';
+import BodyParser from './body-parser';
 import ActionResolver from './action.resolver';
 import HttpStatusCodeResolver from './http-status-code.resolver';
 import HttpStatusCodes from '../constants/httpStatusCodes';

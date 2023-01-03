@@ -1,40 +1,16 @@
 import * as dotenv from 'dotenv';
-
-import HttpServer from './shared/httpServer';
-import Router from './shared/httpServer/router';
+import path from 'path';
+import { cpus } from 'node:os';
+import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 
 dotenv.config();
 
 const { API_PORT = 3000 } = process.env;
 
-const router = new Router();
+const numCPUs = cpus().length;
 
-router.setApiPath('/api');
+for (let i = 0; i <= numCPUs; i += 1) {
+  console.log('i', i);
 
-router.get('/users', async (req, res) => {
-  console.log('GET users');
-  return {
-    actionResult: [],
-    statusCode: 200,
-  };
-});
-
-router.post('/users', async (req, res) => {
-  console.log('POST users');
-  return {
-    actionResult: [],
-    statusCode: 200,
-  };
-});
-
-router.get('/admin/users', async (req, res) => {
-  console.log('req from controller');
-  return {
-    actionResult: [],
-    statusCode: 200,
-  };
-});
-
-const server = new HttpServer({ router });
-
-server.listen(Number(API_PORT));
+  const worker = new Worker(path.resolve(__dirname, './worker.ts'));
+}

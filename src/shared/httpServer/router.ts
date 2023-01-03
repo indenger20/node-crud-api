@@ -6,15 +6,7 @@ class Router {
 
   private apiPath = '';
 
-  private prepareRoute({
-    path,
-    controller,
-    method,
-  }: {
-    path: Route['path'];
-    controller: Route['controller'];
-    method: Methods;
-  }) {
+  private prepareRoute({ path, controller, method }: Route) {
     this.routes.push({
       path: `${this.apiPath}${path}`,
       method,
@@ -26,7 +18,7 @@ class Router {
     this.apiPath = path;
   }
 
-  get(path: Route['path'], controller: Route['controller']) {
+  get(path: Route['path'], controller: Route['controller']): void {
     this.prepareRoute({ path, controller, method: Methods.GET });
   }
 

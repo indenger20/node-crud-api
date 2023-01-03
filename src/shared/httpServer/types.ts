@@ -7,8 +7,10 @@ export type Response = ServerResponse<IncomingMessage> & {
   req: IncomingMessage;
 };
 
+export type RequestResult = { statusCode: HttpStatusCodes; actionResult: unknown };
+
 export interface Route {
   method: Methods;
   path: string;
-  controller: (request: Request, response: Response) => Promise<{ statusCode: HttpStatusCodes; actionResult: unknown }>;
+  controller: (request: Request, response: Response) => Promise<RequestResult>;
 }

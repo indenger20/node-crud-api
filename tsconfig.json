@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": ["es6"],
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "NodeNext",
+    "lib": ["es6", "ESNext"],
     "allowJs": true,
     "outDir": "dist",
     "strict": true,
@@ -10,5 +11,10 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "typeRoots": ["./global.d.ts"]
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   }
 }

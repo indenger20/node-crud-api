@@ -8,15 +8,15 @@ class ActionResolver {
     const requestUrl = request.url?.toLowerCase() ?? '';
     const httpMethod = request.method?.toUpperCase() ?? '';
 
-    const avalibleRoutes = routes.filter(
+    const avalibleRoutesByPath = routes.filter(
       (r) => requestUrl.endsWith(r.path) || requestUrl.startsWith(`${r.path}/`) || requestUrl.startsWith(`${r.path}?`),
     );
 
-    if (!avalibleRoutes.length) {
+    if (!avalibleRoutesByPath.length) {
       throw new RouteResolveError(`A route can not be resolved. The url is: "${requestUrl}".`);
     }
 
-    const route = avalibleRoutes.find((r) => r.method.toUpperCase() === httpMethod);
+    const route = avalibleRoutesByPath.find((r) => r.method.toUpperCase() === httpMethod.toUpperCase());
 
     if (!route) {
       throw new ActionResolveError(`An action name can not be resolved. The url is: "${requestUrl}".`);

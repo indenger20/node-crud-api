@@ -1,6 +1,6 @@
 import { ActionResolveError, RouteResolveError } from '../errors/router';
+import Request from './Request';
 import Router from './router';
-import { Request } from './types';
 
 class ActionResolver {
   static async resolve({ request, router }: { request: Request; router: Router }) {

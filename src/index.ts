@@ -1,16 +1,17 @@
 import * as dotenv from 'dotenv';
-import path from 'path';
-import { cpus } from 'node:os';
-import { Worker, isMainThread, parentPort } from 'node:worker_threads';
+
+import { args } from './shared/utils/parseArgs';
+import { createMultiServer, createServer } from './servers';
 
 dotenv.config();
 
+const isMulti = args.values.multi;
+
 const { API_PORT = 3000 } = process.env;
+const port = Number(API_PORT);
 
-const numCPUs = cpus().length;
-
-for (let i = 0; i <= numCPUs; i += 1) {
-  console.log('i', i);
-
-  const worker = new Worker(path.resolve(__dirname, './worker.ts'));
+if (isMulti) {
+  createMultiServer(port);
+} else {
+  createServer(port);
 }

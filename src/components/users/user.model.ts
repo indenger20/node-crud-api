@@ -1,6 +1,6 @@
 import EntityBase from '../../shared/models/entity-base';
 
-type UserModelType = {
+type UserDto = {
   id: string;
   username: string;
   age: number;
@@ -12,7 +12,7 @@ class UserModel extends EntityBase {
   age;
   hobbies;
 
-  constructor({ id, username, age, hobbies }: UserModelType) {
+  constructor({ id, username, age, hobbies }: UserDto) {
     super({ id });
     this.id = id;
     this.username = username;

@@ -1,11 +1,7 @@
-import { IncomingMessage, ServerResponse } from 'http';
 import HttpStatusCodes from '../constants/httpStatusCodes';
 import { Methods } from './constants';
-
-export type Request = IncomingMessage;
-export type Response = ServerResponse<IncomingMessage> & {
-  req: IncomingMessage;
-};
+import Request from './Request';
+import Response from './Response';
 
 export type RequestResult = { statusCode: HttpStatusCodes; actionResult: unknown };
 

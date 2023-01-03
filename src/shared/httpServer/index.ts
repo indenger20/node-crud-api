@@ -1,30 +1,99 @@
 import { createServer } from 'http';
 import Router from './router';
-import BodyParser from './body-parser';
 import ActionResolver from './action.resolver';
-import HttpStatusCodeResolver from './http-status-code.resolver';
 import HttpStatusCodes from '../constants/httpStatusCodes';
-import { Response } from './types';
-import BodyResolver from './body.resolver';
+import { RouteResolveErrorBase } from '../errors/router/index';
+import Request from './Request';
+import Response from './Response';
 
 class HttpServer {
   private server: ReturnType<typeof createServer>;
 
   constructor({ router }: { router: Router }) {
-    this.server = createServer();
+    this.server = createServer(
+      {
+        IncomingMessage: Request,
+        ServerResponse: Response,
+      },
+      async (request, response) => {
+        try {
+          const body = await this.resolveBodyRequest(request);
 
-    this.server.on('request', async (request, response) => {
-      try {
-        await BodyParser.parse(request);
+          request.setBody(body);
 
-        const controller = await ActionResolver.resolve({ request, router });
-        const { statusCode, actionResult } = await controller(request, response);
+          const controller = await ActionResolver.resolve({ request, router });
+          const { statusCode, actionResult } = await controller(request, response);
 
-        this.prepareAndSendRequest({ response, statusCode, actionResult });
-      } catch (error) {
-        this.prepareAndSendRequest({ response, error });
+          this.prepareAndSendRequest({ response, statusCode, actionResult });
+        } catch (error) {
+          this.prepareAndSendRequest({ response, error });
+        }
+      },
+    );
+  }
+
+  private async resolveBodyRequest(request: Request) {
+    const bodyChunks: Uint8Array[] = [];
+
+    for await (const chunk of request) {
+      bodyChunks.push(chunk);
+    }
+
+    return Buffer.concat(bodyChunks).toString();
+  }
+
+  private resolveStatusCode({ error, statusCode }: { error: unknown; statusCode?: HttpStatusCodes }): HttpStatusCodes {
+    if (statusCode) {
+      return statusCode;
+    }
+
+    if (error) {
+      if (error instanceof RouteResolveErrorBase) {
+        return HttpStatusCodes.NOT_FOUND;
       }
-    });
+
+      // if (error instanceof NotFoundError.constructor) {
+      //   return HttpStatusCodes.NOT_FOUND;
+      // }
+
+      return HttpStatusCodes.INTERNAL_SERVER_ERROR;
+    }
+
+    return HttpStatusCodes.OK;
+  }
+
+  private resolveBodyResponse({
+    responseHttpStatusCode,
+    actionResult,
+    error,
+  }: {
+    responseHttpStatusCode: HttpStatusCodes;
+    actionResult: unknown;
+    error: unknown;
+  }) {
+    if (actionResult) {
+      return actionResult;
+    }
+
+    if (!error) {
+      return {};
+    }
+
+    if (responseHttpStatusCode === HttpStatusCodes.INTERNAL_SERVER_ERROR) {
+      return {
+        message: 'Internal Server Error',
+      };
+    }
+
+    if (responseHttpStatusCode === HttpStatusCodes.NOT_FOUND) {
+      return {
+        message: 'NOT FOUND',
+      };
+    }
+
+    return {
+      message: 'Internal Server Error',
+    };
   }
 
   private prepareAndSendRequest({
@@ -38,24 +107,18 @@ class HttpServer {
     actionResult?: unknown;
     error?: unknown;
   }) {
-    const responseHttpStatusCode = HttpStatusCodeResolver.resolve({
+    const responseHttpStatusCode = this.resolveStatusCode({
       error,
       statusCode,
     });
 
-    const responseBody = BodyResolver.resolve({
+    const responseBody = this.resolveBodyResponse({
       actionResult,
       responseHttpStatusCode,
       error,
     });
 
-    const bodySerialized = JSON.stringify(responseBody);
-
-    response.setHeader('Content-Length', Buffer.from(bodySerialized).length);
-    response.setHeader('Content-Type', 'application/json');
-    response.statusCode = responseHttpStatusCode;
-
-    response.end(bodySerialized);
+    response.json(responseBody, responseHttpStatusCode);
   }
 
   listen(port: number) {

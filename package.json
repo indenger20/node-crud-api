@@ -6,8 +6,9 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "nodemon",
-    "start": "npm run build && node dist/index.js",
+    "start:prod": "npm run build && node dist/index.js",
     "build": "webpack",
+    "start:multi": "nodemon -- --multi",
     "lint": "eslint src/** --fix"
   },
   "devDependencies": {

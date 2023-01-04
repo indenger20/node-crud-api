@@ -12,9 +12,4 @@
     "resolveJsonModule": true,
     "typeRoots": ["./global.d.ts"]
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  }
 }

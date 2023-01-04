@@ -1,9 +1,9 @@
 import { IncomingMessage } from 'http';
 
-class Request extends IncomingMessage {
-  private body?: string;
+class Request<T = unknown> extends IncomingMessage {
+  private body?: T;
 
-  public setBody(body?: string) {
+  public setBody(body?: T) {
     this.body = body;
   }
 

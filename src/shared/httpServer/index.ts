@@ -6,6 +6,7 @@ import { RouteResolveErrorBase } from '../errors/router/index';
 import Request from './Request';
 import Response from './Response';
 import HttpNotFoundError from '../errors/http-not-found.error';
+import ArgumentValidateError from '../errors/argument-validate.error';
 
 class HttpServer {
   private server: ReturnType<typeof createServer>;
@@ -57,6 +58,10 @@ class HttpServer {
         return HttpStatusCodes.HTTP_STATUS_NOT_FOUND;
       }
 
+      if (error instanceof ArgumentValidateError) {
+        return HttpStatusCodes.HTTP_STATUS_BAD_REQUEST;
+      }
+
       return HttpStatusCodes.HTTP_STATUS_INTERNAL_SERVER_ERROR;
     }
 
@@ -70,7 +75,7 @@ class HttpServer {
   }: {
     responseHttpStatusCode: number;
     actionResult: unknown;
-    error: unknown;
+    error: any;
   }) {
     if (actionResult) {
       return actionResult;
@@ -78,6 +83,12 @@ class HttpServer {
 
     if (!error) {
       return {};
+    }
+
+    if (responseHttpStatusCode === HttpStatusCodes.HTTP_STATUS_BAD_REQUEST) {
+      return {
+        message: error.message ?? 'BAD REQUEST',
+      };
     }
 
     if (responseHttpStatusCode === HttpStatusCodes.HTTP_STATUS_INTERNAL_SERVER_ERROR) {
@@ -88,7 +99,7 @@ class HttpServer {
 
     if (responseHttpStatusCode === HttpStatusCodes.HTTP_STATUS_NOT_FOUND) {
       return {
-        message: 'NOT FOUND',
+        message: error.message ?? 'NOT FOUND',
       };
     }
 

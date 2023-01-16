@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-loop-func */
+/* eslint-disable guard-for-in */
 import { cpus } from 'node:os';
 import cluster from 'node:cluster';
 import http from 'node:http';
@@ -13,6 +15,21 @@ const resolveServerPort = (port: number) => {
   requests = requests === numCPUs ? 1 : requests + 1;
   const nextPort = port + requests;
   return nextPort;
+};
+
+const startMultiServer = () => {
+  for (const id in cluster.workers) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const worker = cluster.workers[id]!;
+
+    // worker.on('message', (updatedStore: any) => {
+    //   for (const worker of listOfWorkers) {
+    //     worker.send(updatedStore);
+    //   }
+
+    //   updatedStore(updatedStore as Store);
+    // });
+  }
 };
 
 const createLoadBalancerServer = (port: number) => {
@@ -57,6 +74,7 @@ const createMultiServer = (port: number) => {
       cluster.fork();
     });
 
+    // startMultiServer(port);
     createLoadBalancerServer(port);
   } else {
     const clusterPort = port + (cluster.worker?.id ?? 0);

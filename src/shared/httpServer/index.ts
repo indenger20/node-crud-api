@@ -5,6 +5,7 @@ import HttpStatusCodes from '../constants/httpStatusCodes';
 import { RouteResolveErrorBase } from '../errors/router/index';
 import Request from './Request';
 import Response from './Response';
+import HttpNotFoundError from '../errors/http-not-found.error';
 
 class HttpServer {
   private server: ReturnType<typeof createServer>;
@@ -42,24 +43,24 @@ class HttpServer {
     return Buffer.concat(bodyChunks).toString();
   }
 
-  private resolveStatusCode({ error, statusCode }: { error: unknown; statusCode?: HttpStatusCodes }): HttpStatusCodes {
+  private resolveStatusCode({ error, statusCode }: { error: unknown; statusCode?: number }): number {
     if (statusCode) {
       return statusCode;
     }
 
     if (error) {
       if (error instanceof RouteResolveErrorBase) {
-        return HttpStatusCodes.NOT_FOUND;
+        return HttpStatusCodes.HTTP_STATUS_NOT_FOUND;
       }
 
-      // if (error instanceof NotFoundError.constructor) {
-      //   return HttpStatusCodes.NOT_FOUND;
-      // }
+      if (error instanceof HttpNotFoundError) {
+        return HttpStatusCodes.HTTP_STATUS_NOT_FOUND;
+      }
 
-      return HttpStatusCodes.INTERNAL_SERVER_ERROR;
+      return HttpStatusCodes.HTTP_STATUS_INTERNAL_SERVER_ERROR;
     }
 
-    return HttpStatusCodes.OK;
+    return HttpStatusCodes.HTTP_STATUS_OK;
   }
 
   private resolveBodyResponse({
@@ -67,7 +68,7 @@ class HttpServer {
     actionResult,
     error,
   }: {
-    responseHttpStatusCode: HttpStatusCodes;
+    responseHttpStatusCode: number;
     actionResult: unknown;
     error: unknown;
   }) {
@@ -79,13 +80,13 @@ class HttpServer {
       return {};
     }
 
-    if (responseHttpStatusCode === HttpStatusCodes.INTERNAL_SERVER_ERROR) {
+    if (responseHttpStatusCode === HttpStatusCodes.HTTP_STATUS_INTERNAL_SERVER_ERROR) {
       return {
         message: 'Internal Server Error',
       };
     }
 
-    if (responseHttpStatusCode === HttpStatusCodes.NOT_FOUND) {
+    if (responseHttpStatusCode === HttpStatusCodes.HTTP_STATUS_NOT_FOUND) {
       return {
         message: 'NOT FOUND',
       };
@@ -103,7 +104,7 @@ class HttpServer {
     error,
   }: {
     response: Response;
-    statusCode?: HttpStatusCodes;
+    statusCode?: number;
     actionResult?: unknown;
     error?: unknown;
   }) {

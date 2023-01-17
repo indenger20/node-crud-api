@@ -1,11 +1,39 @@
 {
   "name": "crud",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "https://github.com/indenger20/node-crud-api.git",
   "author": "yaroslav.sklema <yaroslav.sklema@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "index.js"
+    "start:dev": "nodemon",
+    "start:prod": "npm run build && node dist/index.js",
+    "build": "webpack",
+    "start:multi": "nodemon -- --multi",
+    "lint": "eslint src/** --fix"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^18.11.17",
+    "@types/uuid": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.1",
+    "prettier-standard": "^16.4.1",
+    "ts-loader": "^9.4.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "uuid": "^9.0.0"
   }
 }

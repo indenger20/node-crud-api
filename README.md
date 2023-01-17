@@ -3,7 +3,7 @@
 ## Install the application
 
 ```bash
-git clone https://github.com/Peskarski/crud-api.git
+git clone https://github.com/indenger20/node-crud-api.git
 git checkout develop
 npm install
 ```
@@ -30,9 +30,3 @@ There 3 ways to run the application:
     ```bash
     npm run start:multi
     ```
-
-## Test the application
-
-```bash
-npm run test
-```
